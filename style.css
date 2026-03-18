@@ -1,0 +1,361 @@
+/* === ROOT === */
+:root {
+  color-scheme: light;
+
+  /* Colors */
+  --bg: light-dark(oklch(0.96 0.01 250), oklch(0.16 0.02 250));
+  --card: light-dark(oklch(0.99 0.01 250), oklch(0.22 0.02 250));
+  --text: light-dark(oklch(0.2 0.03 250), oklch(0.95 0.02 250));
+  --text-muted: light-dark(oklch(0.5 0.03 250), oklch(0.75 0.02 250));
+  
+  --accent: oklch(0.65 0.2 260);
+  --accent-hover: oklch(0.55 0.2 260);
+  --error: oklch(0.6 0.25 25);
+  
+  --track: light-dark(oklch(0.92 0.01 250), oklch(0.12 0.02 250));
+  --input-bg: light-dark(oklch(0.95 0.01 250), oklch(0.15 0.02 250));
+
+  /* Geometry */
+  --radius-card: 24px;
+  --radius-pill: 100vmax;
+  --radius-input: 12px;
+
+  /* Shadows */
+  --shadow-raised-highlight: light-dark(#ffffff, #3e4145);
+  --shadow-raised-lowlight: light-dark(#dadce0, #16181b);
+  --shadow-raised: 
+    -4px -4px 10px var(--shadow-raised-highlight), 
+    4px  4px 10px var(--shadow-raised-lowlight);
+
+  --shadow-sunken-inner-depth: light-dark(#dadce0, #16181b);
+  --shadow-sunken-inner-glow: light-dark(#ffffff, #3e4145);
+  --shadow-sunken: 
+    inset  2px  2px 10px var(--shadow-sunken-inner-depth), 
+    inset -2px -2px 10px var(--shadow-sunken-inner-glow);
+
+  --shadow-tab-platform-top: light-dark(#ffffff, #3e4145);
+  --shadow-tab-platform-bottom: light-dark(#dadce0, #16181b);
+  --shadow-tab-platform: 
+    -2px -2px 2px var(--shadow-tab-platform-top), 
+    2px  2px 2px var(--shadow-tab-platform-bottom);
+}
+
+/* === BASE === */
+* {
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none; /* Disable user select globally */
+}
+
+/* Allow text selection only in specific output areas and the code input */
+input, .selectable {
+  user-select: text;
+}
+
+body {
+  margin: 0;
+  font-family: "Inter", sans-serif;
+  background-color: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* LAYOUT */
+.app {
+  width: 100%;
+  max-width: 900px;
+  margin: auto;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+header {
+  text-align: center;
+}
+
+h1 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-top: 0;
+  margin-bottom: 1.5rem;
+  letter-spacing: -0.5px;
+}
+
+main {
+  display: flex;
+  flex-direction: column; /* Mobile first */
+  align-items: center;
+  gap: 1.5rem;
+}
+
+@media (min-width: 768px) {
+  main {
+    flex-direction: row;
+    align-items: stretch; /* Keep cards equal height */
+  }
+}
+
+.card {
+  flex: 1;
+  width: 100%;
+  background: var(--card);
+  border-radius: var(--radius-card);
+  padding: 1.8rem;
+  box-shadow: var(--shadow-raised);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-height: 280px;
+}
+
+/* === TABS & ANIMATED INDICATOR === */
+.format-selector-wrapper {
+  background: var(--track);
+  border-radius: var(--radius-pill);
+  padding: 0.4rem;
+  box-shadow: var(--shadow-sunken);
+  display: inline-block;
+  width: 100%;
+  max-width: 500px;
+}
+
+.format-selector {
+  display: flex;
+  gap: 0.2rem;
+  position: relative;
+  z-index: 1;
+}
+
+.format-selector button {
+  flex: 1;
+  padding: 0.6rem 0.5rem;
+  border-radius: var(--radius-pill);
+  border: none;
+  background: transparent;
+  color: var(--text-muted);
+  font-family: inherit;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: color 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  z-index: 2;
+}
+
+.format-selector button:hover {
+  color: var(--text);
+}
+
+/* This element is added dynamically by JS. Its position and width are updated to slide. */
+.format-selector-indicator {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  /* Width and Left will be set and updated by JS */
+  background: var(--card); /* The elevated white platform */
+  border-radius: var(--radius-pill);
+  box-shadow: var(--shadow-tab-platform); /* Dramatic platform depth */
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); /* Essential sliding animation */
+  z-index: 1; /* Sandwiched between base track and button text */
+}
+
+/* Active tab text color adjusted for white platform and transition */
+.format-selector button.active {
+  color: var(--accent); /* Accent color for active tab text */
+}
+
+/* ===  SWITCH BUTTON === */
+.switch-btn {
+  --btn-rotate: 90deg;
+  flex-shrink: 0;
+  border: none;
+  background: var(--accent);
+  border-radius: 50%;
+  width: 56px;
+  height: 56px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--shadow-raised);
+  transform: rotate(var(--btn-rotate)); 
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@media (min-width: 768px) {
+  .switch-btn {
+    --btn-rotate: 0deg;
+    transform: rotate(var(--btn-rotate));
+  }
+}
+
+.switch-btn:hover {
+  background: var(--accent-hover);
+  transform: scale(1.05) rotate(var(--btn-rotate)) rotate(180deg);
+}
+
+.switch-btn svg {
+  width: 28px;
+  height: 28px;
+  fill: white;
+}
+
+/* === INPUTS & SELECTS === */
+/* These items "drop inside the screen with Sunken Neumorphism */
+.input-group {
+  margin-bottom: 1.2rem;
+}
+
+.input-group:last-child {
+  margin-bottom: 0;
+}
+
+label {
+  display: block;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  margin-bottom: 0.4rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+input, select {
+  width: 100%;
+  padding: 0.8rem 1rem;
+  border-radius: var(--radius-input);
+  border: 1px solid transparent;
+  background: var(--input-bg);
+  color: var(--text);
+  font-family: inherit;
+  font-size: 1rem;
+  box-shadow: var(--shadow-sunken);
+  transition: border-color 0.2s;
+  outline: none;
+}
+
+input:focus, select:focus {
+  border-color: var(--accent);
+}
+
+/* Monospace input specifically for Code */
+input#codeInput {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 1.2rem;
+  letter-spacing: 2px;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+/* === OUTPUT DISPLAYS === */
+.form-output-display {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.output-row {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.output-val {
+  font-size: 1.2rem;
+  font-weight: 600;
+}
+
+.code-output-container {
+  background: var(--input-bg);
+  border-radius: var(--radius-input);
+  padding: 1rem;
+  box-shadow: var(--shadow-sunken);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 0.5rem;
+}
+
+.code-output-text {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 1.5rem;
+  font-weight: 700;
+  letter-spacing: 3px;
+  color: var(--accent);
+  flex: 1;
+  text-align: center;
+}
+
+.copy-btn {
+  width: 40px;
+  height: 40px;
+  position: relative;
+  overflow: hidden;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.5rem;
+  border-radius: 8px;
+  transition: 0.2s;
+  box-shadow: var(--shadow-raised);
+}
+
+.copy-btn .icon {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: 
+    opacity 0.25s ease,
+    transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Default state */
+.copy-btn .icon-copy {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.copy-btn .icon-check {
+  opacity: 0;
+  transform: scale(0.6);
+}
+
+/* Active (copied) state */
+.copy-btn.copied .icon-copy {
+  opacity: 0;
+  transform: scale(0.6);
+}
+
+.copy-btn.copied .icon-check {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.copy-btn:hover {
+  color: var(--text);
+  background: var(--card);
+}
+
+.copy-btn svg {
+  width: 24px;
+  height: 24px;
+}
+
+/* VALIDATION */
+.error {
+  color: var(--error);
+  font-size: 0.85rem;
+  margin-top: 0.5rem;
+  text-align: center;
+  min-height: 1.2rem; /* Keep space even if empty */
+}

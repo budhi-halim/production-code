@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Production Code Tools</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="style.css">
+
+  <script type="module" src="main.js"></script>
+</head>
+
+<body>
+
+<div class="app">
+
+  <header>
+    <h1>Production Code Tools</h1>
+
+    <div class="format-selector-wrapper">
+      <div class="format-selector" id="formatTabs">
+        <button data-format="letters" class="active">Letters</button>
+        <button data-format="numbers">Numbers</button>
+        <button data-format="base36-nl">0-9A-Z</button>
+        <button data-format="base36-ln">A-Z0-9</button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <div class="card" id="leftCard">
+      </div>
+
+    <button id="switchBtn" class="switch-btn" aria-label="Switch Mode">
+      <svg focusable="false" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+        <path d="M6.99 11L3 15l3.99 4v-3H14v-2H6.99v-3zM21 9l-3.99-4v3H10v2h7.01v3L21 9z"></path>
+      </svg>
+    </button>
+
+    <div class="card" id="rightCard">
+      </div>
+  </main>
+
+</div>
+
+</body>
+</html>
