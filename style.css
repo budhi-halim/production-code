@@ -1,6 +1,6 @@
 /* === ROOT === */
 :root {
-  color-scheme: light;
+  color-scheme: ligh dark;
 
   /* Colors */
   --bg: light-dark(oklch(0.96 0.01 250), oklch(0.16 0.02 250));
