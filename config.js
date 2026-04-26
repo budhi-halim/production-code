@@ -34,7 +34,7 @@ export const FORMATS = {
 // === REVERSE FLAGS ===
 export const REV = {
   "letters": { year: false, date: true, shiftLoc: false },
-  "numbers": { year: false, date: true, shiftLoc: false },
+  "numbers": { year: false, date: false, shiftLoc: true },
   "base36-nl": { year: false, date: true, shiftLoc: false },
   "base36-ln": { year: false, date: true, shiftLoc: false }
 };
