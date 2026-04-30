@@ -11,7 +11,6 @@ export function getDayIndex(date) {
   const start = new Date(date.getFullYear(), 0, 1);
   let diff = Math.floor((date - start) / 86400000) + 1;
 
-  // Leap year adjustment: skip Feb 29 logic (index 60) for non-leap years
   if (!isLeapYear(date.getFullYear()) && diff >= 60) {
     diff += 1;
   }
@@ -25,18 +24,28 @@ export function getDateFromDayIndex(year, dayIndex) {
   
   const leap = isLeapYear(year);
   
-  // If non-leap year and asking for day 60 (Feb 29 equivalent), invalid
   if (!leap && dayIndex === 60) return null;
   
   let actualDiff = dayIndex;
   
-  // Reverse the leap year skip
   if (!leap && dayIndex > 60) {
     actualDiff -= 1;
   }
   
-  // actualDiff is 1-based, JS Date month-day is 0-based offset from Jan 1
   return new Date(year, 0, actualDiff);
+}
+
+// === EXPIRATION LOGIC ===
+export function calculateExpirationDate(prodDate, shelfLifeDays) {
+  const expDate = new Date(prodDate);
+  expDate.setDate(expDate.getDate() + shelfLifeDays);
+  return expDate;
+}
+
+export function calculateProductionDate(expDate, shelfLifeDays) {
+  const prodDate = new Date(expDate);
+  prodDate.setDate(prodDate.getDate() - shelfLifeDays);
+  return prodDate;
 }
 
 // === ENCODER / DECODER CORE ===
@@ -60,7 +69,7 @@ function decodeSegment(str, chars, reverse) {
 
   for (let i = 0; i < str.length; i++) {
     let idx = chars.indexOf(str[i]);
-    if (idx === -1) return null; // Invalid char found
+    if (idx === -1) return null; 
     
     if (reverse) idx = base - 1 - idx;
     val = val * base + idx;
@@ -70,19 +79,13 @@ function decodeSegment(str, chars, reverse) {
 }
 
 // === MAIN TRANSLATION LOGIC ===
-export function formToCode(date, shift, loc, formatId) {
-  const fmt = FORMATS[formatId];
-  const rev = REV[formatId];
+export function formToCode(date, shift, loc) {
+  const fmt = FORMATS["numbers"];
+  const rev = REV["numbers"];
   const base = fmt.chars.length;
 
-  // Year: modulo cycle based on the alphabet length
   const y = date.getFullYear() % base;
-  
-  // Day: 0-indexed for Base26/36, 1-indexed for Base10
-  let d = getDayIndex(date);
-  if (formatId !== "numbers") d -= 1; 
-
-  // Shift & Location: Combined base 9 logic
+  const d = getDayIndex(date); 
   const sl = shift * 3 + loc;
 
   return (
@@ -92,9 +95,9 @@ export function formToCode(date, shift, loc, formatId) {
   );
 }
 
-export function codeToForm(code, formatId) {
-  const fmt = FORMATS[formatId];
-  const rev = REV[formatId];
+export function codeToForm(code) {
+  const fmt = FORMATS["numbers"];
+  const rev = REV["numbers"];
   const base = fmt.chars.length;
 
   const [lenY, lenD, lenSL] = fmt.lengths;
@@ -120,13 +123,11 @@ export function codeToForm(code, formatId) {
 
   // 3. Resolve Closest Past/Current Year
   const currentYear = new Date().getFullYear(); 
-  // Math explanation: We want the highest year <= currentYear where year % base == yVal
   const modDiff = ((currentYear - yVal) % base + base) % base;
   const year = currentYear - modDiff;
 
   // 4. Resolve Date
-  const dVal = formatId === "numbers" ? dValRaw : dValRaw + 1;
-  const date = getDateFromDayIndex(year, dVal);
+  const date = getDateFromDayIndex(year, dValRaw);
   
   if (!date) {
     return { error: "Invalid date combination" };

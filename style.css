@@ -110,7 +110,8 @@ main {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  min-height: 280px;
+  /* Increased min-height to accommodate the tallest tab layout and prevent shifting */
+  min-height: 340px; 
 }
 
 /* === TABS & ANIMATED INDICATOR === */
@@ -147,8 +148,10 @@ main {
   z-index: 2;
 }
 
-.format-selector button:hover {
-  color: var(--text);
+@media (hover: hover) and (pointer: fine) {
+  .format-selector button:hover {
+    color: var(--text);
+  }
 }
 
 /* This element is added dynamically by JS. Its position and width are updated to slide. */
@@ -183,26 +186,27 @@ main {
   align-items: center;
   justify-content: center;
   box-shadow: var(--shadow-raised);
-  transform: rotate(var(--btn-rotate)); 
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: background-color 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 @media (min-width: 768px) {
   .switch-btn {
     --btn-rotate: 0deg;
-    transform: rotate(var(--btn-rotate));
   }
 }
 
-.switch-btn:hover {
-  background: var(--accent-hover);
-  transform: scale(1.05) rotate(var(--btn-rotate)) rotate(180deg);
+@media (hover: hover) and (pointer: fine) {
+  .switch-btn:hover {
+    background: var(--accent-hover);
+  }
 }
 
 .switch-btn svg {
   width: 28px;
   height: 28px;
   fill: white;
+  transform: rotate(var(--btn-rotate)); 
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* === INPUTS & SELECTS === */
@@ -341,9 +345,11 @@ input#codeInput {
   transform: scale(1);
 }
 
-.copy-btn:hover {
-  color: var(--text);
-  background: var(--card);
+@media (hover: hover) and (pointer: fine) {
+  .copy-btn:hover {
+    color: var(--text);
+    background: var(--card);
+  }
 }
 
 .copy-btn svg {
